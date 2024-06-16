@@ -1,0 +1,190 @@
+i have a Telegram bot on aiogram, it contains
+
+(MAIN.PY)
+import sys
+import asyncio
+
+
+import logging
+from aiogram import Bot, Dispatcher, types
+from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
+from aiogram.types import BotCommand
+from aiogram.filters import Command
+from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.client.session.aiohttp import AiohttpSession
+from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
+from handlers import register_handlers_profile, register_handlers_settings, register_handlers_todo, register_handlers_avito
+
+load_dotenv()
+TOKEN = os.getenv('API_TOKEN')
+
+# Initialize Bot and Dispatcher with storage
+bot = Bot(
+    token=API_TOKEN,
+    session=AiohttpSession(),
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
+dp = Dispatcher(storage=MemoryStorage())
+
+# Register handlers
+register_handlers_profile(dp)
+register_handlers_settings(dp)
+register_handlers_todo(dp)
+register_handlers_avito(dp)
+
+async def set_commands(bot: Bot):
+    commands = [
+        BotCommand(command="/start", description="Start the bot"),
+        BotCommand(command="/help", description="Help message"),
+    ]
+    await bot.set_my_commands(commands)
+
+async def send_welcome(message: types.Message):
+    await message.answer(MAIN_MENU_MESSAGE, reply_markup=main_menu_keyboard())
+
+dp.message.register(send_welcome, Command(commands=["start", "help"]))
+
+async def main() -> None:
+    await dp.start_polling(bot)
+
+
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    asyncio.run(main())
+
+
+(HANDLERS/AVITO.PY)
+
+from aiogram import Dispatcher, types
+from keyboards.keyboards import avito_menu_keyboard, AVITO_MENU_MESSAGE
+
+def register_handlers_avito(dp: Dispatcher):
+    dp.callback_query.register(avito_menu, lambda c: c.data == 'load_avito')
+    dp.callback_query.register(back_to_main, lambda c: c.data == 'back_to_main')
+
+async def avito_menu(callback_query: types.CallbackQuery):
+    await callback_query.message.edit_text(AVITO_MENU_MESSAGE, reply_markup=avito_menu_keyboard())
+
+async def back_to_main(callback_query: types.CallbackQuery):
+    from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
+    await callback_query.message.edit_text(MAIN_MENU_MESSAGE, reply_markup=main_menu_keyboard())
+
+
+(HANDLERS/PROFILE.PY)
+
+from aiogram import Dispatcher, types
+from keyboards.keyboards import profile_menu_keyboard, PROFILE_MENU_MESSAGE
+
+def register_handlers_profile(dp: Dispatcher):
+    dp.callback_query.register(profile_menu, lambda c: c.data == 'profile')
+    dp.callback_query.register(back_to_main, lambda c: c.data == 'back_to_main')
+
+async def profile_menu(callback_query: types.CallbackQuery):
+    user_info = {
+        "uid": callback_query.from_user.id,
+        "name": callback_query.from_user.full_name,
+        "direction": "code",  # This should be fetched from the user profile in a real app
+        "accounts": 1  # This should be fetched from the user profile in a real app
+    }
+    message = PROFILE_MENU_MESSAGE.format(
+        uid=user_info["uid"],
+        name=user_info["name"],
+        direction=user_info["direction"],
+        accounts=user_info["accounts"]
+    )
+    await callback_query.message.edit_text(message, reply_markup=profile_menu_keyboard())
+
+async def back_to_main(callback_query: types.CallbackQuery):
+    from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
+    await callback_query.message.edit_text(MAIN_MENU_MESSAGE, reply_markup=main_menu_keyboard())
+
+
+(HANDLERS/SETTINGS.PY)
+
+from aiogram import Dispatcher, types
+from keyboards.keyboards import settings_menu_keyboard, SETTINGS_MENU_MESSAGE
+
+def register_handlers_settings(dp: Dispatcher):
+    dp.callback_query.register(settings_menu, lambda c: c.data == 'settings')
+    dp.callback_query.register(back_to_main, lambda c: c.data == 'back_to_main')
+
+async def settings_menu(callback_query: types.CallbackQuery):
+    await callback_query.message.edit_text(SETTINGS_MENU_MESSAGE, reply_markup=settings_menu_keyboard())
+
+async def back_to_main(callback_query: types.CallbackQuery):
+    from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
+    await callback_query.message.edit_text(MAIN_MENU_MESSAGE, reply_markup=main_menu_keyboard())
+
+
+(HANDLERS/TODO.PY)
+
+from aiogram import Dispatcher, types
+
+def register_handlers_todo(dp: Dispatcher):
+    dp.callback_query.register(todo_menu, lambda c: c.data == 'todo')
+    dp.callback_query.register(back_to_main, lambda c: c.data == 'back_to_main')
+
+async def todo_menu(callback_query: types.CallbackQuery):
+    await callback_query.answer("Todo event handled")
+
+async def back_to_main(callback_query: types.CallbackQuery):
+    from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
+    await callback_query.message.edit_text(MAIN_MENU_MESSAGE, reply_markup=main_menu_keyboard())
+
+
+(KEYBOARDS/KEYBOARDS.PY)
+
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+# Main Menu Keyboard
+def main_menu_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Profile", callback_data='profile')],
+        [InlineKeyboardButton(text="Settings", callback_data='settings')],
+        [InlineKeyboardButton(text="Todo", callback_data='todo')],
+        [InlineKeyboardButton(text="Load Avito Account", callback_data='load_avito')]
+    ])
+    return keyboard
+
+# Profile Menu Keyboard
+def profile_menu_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Feature 1", callback_data='feature_1')],
+        [InlineKeyboardButton(text="Feature 2", callback_data='feature_2')],
+        [InlineKeyboardButton(text="Feature 3", callback_data='feature_3')],
+        [InlineKeyboardButton(text="Feature 4", callback_data='feature_4')],
+        [InlineKeyboardButton(text="Back", callback_data='back_to_main')]
+    ])
+    return keyboard
+
+# Settings Menu Keyboard
+def settings_menu_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Feature 1", callback_data='feature_1')],
+        [InlineKeyboardButton(text="Feature 2", callback_data='feature_2')],
+        [InlineKeyboardButton(text="Feature 3", callback_data='feature_3')],
+        [InlineKeyboardButton(text="Feature 4", callback_data='feature_4')],
+        [InlineKeyboardButton(text="Back", callback_data='back_to_main')]
+    ])
+    return keyboard
+
+# Avito Menu Keyboard
+def avito_menu_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Next", callback_data='next')],
+        [InlineKeyboardButton(text="Back", callback_data='back_to_main')]
+    ])
+    return keyboard
+
+# Bot Replies
+MAIN_MENU_MESSAGE = "Main Menu"
+PROFILE_MENU_MESSAGE = "Profile Menu:\n\nInfo:\nTelegram UID: {uid}\nName: {name}\nDirection: {direction}\nLoaded Avito Accounts: {accounts}"
+SETTINGS_MENU_MESSAGE = "Settings Menu: dsfjkljsdklfjklsdjklj;lkaf"
+TODO_MENU_MESSAGE = "Todo Menu"
+AVITO_MENU_MESSAGE = "Wanna load Avito Account?\n\nFirst of all get me the name of Account"
+
+
+can you edit them for me?

@@ -1,0 +1,8 @@
+.env
+service_account.json
+db/users.db
+ve/
+handlers/__pycache__
+keyboards/__pycache__
+utils/__pycache__
+db/__pycache__
