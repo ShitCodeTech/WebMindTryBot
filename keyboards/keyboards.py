@@ -11,34 +11,18 @@ def first_keyboard():
 
 # Main Menu Keyboard
 def main_menu_keyboard():
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Profile", callback_data='profile')],
-        [InlineKeyboardButton(text="Settings", callback_data='settings')],
-        [InlineKeyboardButton(text="Todo", callback_data='todo')],
-        [InlineKeyboardButton(text="Load Avito Account", callback_data='load_avito')]
-    ])
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Profile', callback_data='profile'), InlineKeyboardButton(text='TODO(InProgress)', callback_data='todo')], [InlineKeyboardButton(text='Settings', callback_data='settings'), InlineKeyboardButton(text='Load Avito', callback_data='load_avito')]])
     return keyboard
 
 # Profile Menu Keyboard
 def profile_menu_keyboard():
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Feature 1", callback_data='feature_1')],
-        [InlineKeyboardButton(text="Feature 2", callback_data='feature_2')],
-        [InlineKeyboardButton(text="Feature 3", callback_data='feature_3')],
-        [InlineKeyboardButton(text="Feature 4", callback_data='feature_4')],
-        [InlineKeyboardButton(text="Back", callback_data='back_to_main')]
-    ])
+#   InlineKeyboardButton(text="Back", callback_data='back_to_main')])
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Feature 1', callback_data='feature_1'), InlineKeyboardButton(text='Feature 2', callback_data='feature_2')], [InlineKeyboardButton(text='Feature 3', callback_data='feature_3'), InlineKeyboardButton(text='Feature 4', callback_data='feature_4')], [InlineKeyboardButton(text="Back", callback_data='back_to_main')]])
     return keyboard
 
 # Settings Menu Keyboard
 def settings_menu_keyboard():
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Feature 1", callback_data='feature_1')],
-        [InlineKeyboardButton(text="Feature 2", callback_data='feature_2')],
-        [InlineKeyboardButton(text="Feature 3", callback_data='feature_3')],
-        [InlineKeyboardButton(text="Feature 4", callback_data='feature_4')],
-        [InlineKeyboardButton(text="Back", callback_data='back_to_main')]
-    ])
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Feature 1', callback_data='feature_1'), InlineKeyboardButton(text='Feature 2', callback_data='feature_2')], [InlineKeyboardButton(text='Feature 3', callback_data='feature_3'), InlineKeyboardButton(text='Feature 4', callback_data='feature_4')], [InlineKeyboardButton(text="Back", callback_data='back_to_main')]])
     return keyboard
 
 # Avito Menu Keyboard
@@ -105,3 +89,6 @@ def avito_password_message():
 
 def avito_success_message():
     return "Account data has been successfully saved!"
+
+def first_text():
+    return 'Wake up, Neo... \nThe Matrix has you... \nFollow the white rabbit. \n\nIt`s time to choose your side'

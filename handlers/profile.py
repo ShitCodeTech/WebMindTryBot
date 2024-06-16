@@ -1,6 +1,7 @@
 from aiogram import Dispatcher, types
-from keyboards.keyboards import profile_menu_keyboard, PROFILE_MENU_MESSAGE
+from keyboards import profile_menu_keyboard, PROFILE_MENU_MESSAGE
 from db.database import get_user
+from aiogram.types import FSInputFile
 
 def register_handlers_profile(dp: Dispatcher):
     dp.callback_query.register(profile_menu, lambda c: c.data == 'profile')
@@ -29,11 +30,16 @@ async def profile_menu(callback_query: types.CallbackQuery):
         direction=user_info["direction"],
         accounts=user_info["accounts"]
     )
-    await callback_query.message.edit_text(message, reply_markup=profile_menu_keyboard())
+    await callback_query.message.edit_caption(caption= message, reply_markup=profile_menu_keyboard())
 
 async def back_to_main(callback_query: types.CallbackQuery):
     from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
-    await callback_query.message.edit_text(MAIN_MENU_MESSAGE, reply_markup=main_menu_keyboard())
-
-
-
+    print(callback_query)
+    try: 
+        await callback_query.message.edit_caption(caption='', reply_markup=main_menu_keyboard())
+    except:
+        await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
+        await callback_query.message.answer_animation(
+            animation=FSInputFile('/home/killmilk/WM-dev/WebMindStaffBot/images/1.mp4'),
+            reply_markup=main_menu_keyboard()
+            )

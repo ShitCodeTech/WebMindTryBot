@@ -1,4 +1,5 @@
 from aiogram.enums import ParseMode
+from aiogram.types import FSInputFile
 from aiogram import Dispatcher, types
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
@@ -33,7 +34,7 @@ def register_handlers_avito(dp: Dispatcher):
     dp.callback_query.register(skip_password, lambda c: c.data == 'skip_password')
 
 async def start_avito_dialog(callback_query: types.CallbackQuery, state: FSMContext):
-    await callback_query.message.edit_text(avito_initial_message(), reply_markup=back_to_main_keyboard())
+    await callback_query.message.edit_caption(caption=avito_initial_message(), reply_markup=back_to_main_keyboard())
     await state.set_state(AvitoForm.waiting_for_username)
 
 async def process_username(message: types.Message, state: FSMContext):
@@ -98,7 +99,11 @@ async def store_data(message: types.Message, user_data: dict):
     ]
     add_to_google_sheet(data)
     account_increment(user_data['uid'])
-    await message.answer(avito_success_message(), reply_markup=back_to_main_keyboard())
+    await message.answer_animation(
+        animation=FSInputFile('/home/killmilk/WM-dev/WebMindStaffBot/images/1.mp4'),
+        caption=avito_success_message(), 
+        reply_markup=back_to_main_keyboard()
+        )
 
 async def back_to_main(callback_query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
@@ -106,5 +111,9 @@ async def back_to_main(callback_query: types.CallbackQuery, state: FSMContext):
         await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
     if 'password_message_id' in data:
         await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
-    await callback_query.message.edit_text(MAIN_MENU_MESSAGE, reply_markup=main_menu_keyboard())
+    await message.answer_animation(
+        animation=FSInputFile('/home/killmilk/WM-dev/WebMindStaffBot/images/1.mp4'),
+        caption=avito_success_message(), 
+        reply_markup=back_to_main_keyboard()
+        )
     await state.clear()

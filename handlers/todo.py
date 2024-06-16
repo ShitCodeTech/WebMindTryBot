@@ -5,7 +5,7 @@ def register_handlers_todo(dp: Dispatcher):
     dp.callback_query.register(back_to_main, lambda c: c.data == 'back_to_main')
 
 async def todo_menu(callback_query: types.CallbackQuery):
-    await callback_query.answer("Todo event handled")
+    await callback_query.answer("Don't do that shit anymore")
 
 async def back_to_main(callback_query: types.CallbackQuery):
     from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
