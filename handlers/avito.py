@@ -42,7 +42,6 @@ async def process_username(message: types.Message, state: FSMContext):
     await state.update_data(username=message.text)
     await message.answer(avito_direction_message(), reply_markup=direction_keyboard())
     await state.set_state(AvitoForm.waiting_for_direction)
-    print(message.text)
 
 async def process_direction(callback_query: types.CallbackQuery, state: FSMContext):
     await state.update_data(direction=callback_query.data)

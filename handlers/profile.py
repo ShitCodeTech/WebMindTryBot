@@ -23,7 +23,6 @@ async def profile_menu(callback_query: types.CallbackQuery):
             "direction": "unknown",
             "accounts": 0
         }
-        print(user_info)
 
     message = PROFILE_MENU_MESSAGE.format(
         uid=user_info["uid"],
@@ -35,7 +34,6 @@ async def profile_menu(callback_query: types.CallbackQuery):
 
 async def back_to_main(callback_query: types.CallbackQuery):
     from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
-    print(callback_query, "PROFILE")
     try: 
         await callback_query.message.edit_caption(caption='', reply_markup=main_menu_keyboard())
     except:
