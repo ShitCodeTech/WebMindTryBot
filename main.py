@@ -78,8 +78,9 @@ async def process_direction(callback_query: types.CallbackQuery, state: FSMConte
         'dir_photo': 'Photo'
     }
     direction = direction_map[callback_query.data]
-    user_data = await state.get_data()
-    add_user(callback_query.from_user.id, user_data['name'], direction)
+    user_data = callback_query.from_user.full_name
+    print(user_data, "MAIN")
+    add_user(callback_query.from_user.id, user_data, direction)
     await state.clear()
     await bot.delete_message( 
         chat_id=callback_query.message.chat.id,
