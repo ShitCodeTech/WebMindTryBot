@@ -41,6 +41,6 @@ async def back_to_main(callback_query: types.CallbackQuery):
     except:
         await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
         await callback_query.message.answer_animation(
-            animation=FSInputFile('/home/killmilk/WM-dev/WebMindStaffBot/images/1.mp4'),
+            animation=FSInputFile('./images/1.mp4'),
             reply_markup=main_menu_keyboard()
             )

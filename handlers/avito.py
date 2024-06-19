@@ -100,7 +100,7 @@ async def store_data(message: types.Message, user_data: dict):
     add_to_google_sheet(data)
     account_increment(user_data['uid'])
     await message.answer_animation(
-        animation=FSInputFile('/home/killmilk/WM-dev/WebMindStaffBot/images/1.mp4'),
+        animation=FSInputFile('./images/1.mp4'),
         caption=avito_success_message(), 
         reply_markup=back_to_main_keyboard()
         )
@@ -112,7 +112,7 @@ async def back_to_main(callback_query: types.CallbackQuery, state: FSMContext):
     if 'password_message_id' in data:
         await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
     await message.answer_animation(
-        animation=FSInputFile('/home/killmilk/WM-dev/WebMindStaffBot/images/1.mp4'),
+        animation=FSInputFile('./images/1.mp4'),
         caption=avito_success_message(), 
         reply_markup=back_to_main_keyboard()
         )

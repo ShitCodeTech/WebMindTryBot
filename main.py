@@ -54,13 +54,13 @@ async def send_welcome(message: types.Message, state: FSMContext):
     if user is None:
         await state.update_data(name=message.from_user.id)
         await message.answer_photo(
-            photo=FSInputFile('/home/killmilk/WM-dev/WebMindTryBot/images/2.jpg'),
+            photo=FSInputFile('./images/2.jpg'),
             caption=first_text(),
             reply_markup=first_keyboard())
         await state.set_state(UserForm.waiting_for_direction)
     else:
         await message.answer_animation(
-            animation=FSInputFile('/home/killmilk/WM-dev/WebMindStaffBot/images/1.mp4'),
+            animation=FSInputFile('./images/1.mp4'),
             reply_markup=main_menu_keyboard()
             )
 
@@ -87,7 +87,7 @@ async def process_direction(callback_query: types.CallbackQuery, state: FSMConte
         message_id=callback_query.message.message_id
         )
     await callback_query.message.answer_animation(
-        animation=FSInputFile('/home/killmilk/WM-dev/WebMindStaffBot/images/1.mp4'),
+        animation=FSInputFile('./images/1.mp4'),
         reply_markup=main_menu_keyboard()
         )
 
