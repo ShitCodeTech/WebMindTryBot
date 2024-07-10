@@ -1,8 +1,8 @@
-##WebMindBot 
+## WebMindBot 
 
-#Start
+# Start
 
-docker build 
+`docker build 
 docker ps 
 docker logs -f cont.name
 docker login cont.name
@@ -10,4 +10,4 @@ mkdir ~/.config
 mkdir ~/.config/gspread
 cp service_account.json ~/.config/gspread/
 Ctrl + D
-docker logs -f cont.name
+docker logs -f cont.name`
