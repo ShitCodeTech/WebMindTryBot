@@ -5,7 +5,7 @@ from aiogram.types import FSInputFile
 
 def register_handlers_profile(dp: Dispatcher):
     dp.callback_query.register(profile_menu, lambda c: c.data == 'profile')
-    dp.callback_query.register(back_to_main, lambda c: c.data == 'back_to_main')
+    # dp.callback_query.register(back_to_main, lambda c: c.data == 'back_to_main')
 
 async def profile_menu(callback_query: types.CallbackQuery):
     user = get_user(callback_query.from_user.id)
@@ -32,13 +32,15 @@ async def profile_menu(callback_query: types.CallbackQuery):
     )
     await callback_query.message.edit_caption(caption= message, reply_markup=profile_menu_keyboard())
 
-async def back_to_main(callback_query: types.CallbackQuery):
-    from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
-    try: 
-        await callback_query.message.edit_caption(caption='', reply_markup=main_menu_keyboard())
-    except:
-        await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
-        await callback_query.message.answer_animation(
-            animation=FSInputFile('./images/1.mp4'),
-            reply_markup=main_menu_keyboard()
-            )
+# async def back_to_main(callback_query: types.CallbackQuery):
+#     from keyboards.keyboards import main_menu_keyboard, MAIN_MENU_MESSAGE
+#     try: 
+#         await callback_query.message.edit_caption(caption='', reply_markup=main_menu_keyboard())
+#     except:
+#         await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
+#         await callback_query.message.answer_animation(
+#             animation=FSInputFile('./images/1.mp4'),
+#             reply_markup=main_menu_keyboard()
+#             )
+#     print('profile__back')
+#     await state.clear()

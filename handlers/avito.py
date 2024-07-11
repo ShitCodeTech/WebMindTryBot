@@ -7,7 +7,8 @@ from aiogram.filters.command import Command
 from keyboards.keyboards import (
     avito_initial_message, avito_direction_message, avito_link_message,
     avito_contact_message, avito_password_message, avito_success_message,
-    back_to_main_keyboard, direction_keyboard, skip_contact_keyboard, skip_password_keyboard
+    back_to_main_keyboard, direction_keyboard, skip_contact_keyboard, skip_password_keyboard,
+    main_menu_keyboard
 )
 from utils.utils import add_to_google_sheet  # Import from utils
 from db.database import account_increment
@@ -36,23 +37,27 @@ def register_handlers_avito(dp: Dispatcher):
 async def start_avito_dialog(callback_query: types.CallbackQuery, state: FSMContext):
     await callback_query.message.edit_caption(caption=avito_initial_message(), reply_markup=back_to_main_keyboard())
     await state.set_state(AvitoForm.waiting_for_username)
+    print('start_avito_dialog')
 
 async def process_username(message: types.Message, state: FSMContext):
     await state.update_data(uid=message.from_user.id)
     await state.update_data(username=message.text)
     await message.answer(avito_direction_message(), reply_markup=direction_keyboard())
     await state.set_state(AvitoForm.waiting_for_direction)
-
+    print('process_username')
+    
 async def process_direction(callback_query: types.CallbackQuery, state: FSMContext):
     await state.update_data(direction=callback_query.data)
     await callback_query.message.edit_text(avito_link_message(), reply_markup=None)
     await state.set_state(AvitoForm.waiting_for_link)
+    print('process_direction')
 
 async def process_link(message: types.Message, state: FSMContext):
     await state.update_data(link=message.text)
     msg = await message.answer(avito_contact_message(), reply_markup=skip_contact_keyboard(), parse_mode=ParseMode.HTML)
     await state.update_data(contact_message_id=msg.message_id)
     await state.set_state(AvitoForm.waiting_for_contact)
+    print('process_link')
 
 async def process_contact(message: types.Message, state: FSMContext):
     await state.update_data(contact=message.text)
@@ -61,6 +66,7 @@ async def process_contact(message: types.Message, state: FSMContext):
     msg = await message.answer(avito_password_message(), reply_markup=skip_password_keyboard(), parse_mode=ParseMode.HTML)
     await state.update_data(password_message_id=msg.message_id)
     await state.set_state(AvitoForm.waiting_for_password)
+    print('process_contact')
 
 async def skip_contact(callback_query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
@@ -69,6 +75,7 @@ async def skip_contact(callback_query: types.CallbackQuery, state: FSMContext):
     user_data = await state.get_data()
     await state.clear()
     await store_data(callback_query.message, user_data)
+    print('skip_contact')
 
 async def process_password(message: types.Message, state: FSMContext):
     data = await state.get_data()
@@ -77,6 +84,7 @@ async def process_password(message: types.Message, state: FSMContext):
     user_data['password'] = message.text
     await state.clear()
     await store_data(message, user_data)
+    print('process_password')
 
 async def skip_password(callback_query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
@@ -85,7 +93,7 @@ async def skip_password(callback_query: types.CallbackQuery, state: FSMContext):
     user_data['password'] = '*'
     await state.clear()
     await store_data(callback_query.message, user_data)
-
+    print('skip_password')
 
 async def store_data(message: types.Message, user_data: dict):
     data = [
@@ -104,15 +112,16 @@ async def store_data(message: types.Message, user_data: dict):
         reply_markup=back_to_main_keyboard()
         )
 
+
 async def back_to_main(callback_query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    if 'contact_message_id' in data:
-        await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
-    if 'password_message_id' in data:
-        await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
-    await message.answer_animation(
+    print(data)
+    await callback_query.message.bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
+    
+    await callback_query.message.answer_animation(
         animation=FSInputFile('./images/1.mp4'),
-        caption=avito_success_message(), 
-        reply_markup=back_to_main_keyboard()
+        caption='',
+        reply_markup=main_menu_keyboard()
         )
     await state.clear()
+    print(type(callback_query.message.caption))
